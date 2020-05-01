@@ -1,0 +1,20 @@
+@import "../style.scss";
+
+.youtube-list {
+  display: flex;
+  flex-direction: column;
+
+  .youtube-list-title {
+    margin-bottom: $list-title;
+    letter-spacing: $list-title-letter-spacing;
+  }
+
+  .youtube-list-content {
+    width: 100%;
+    display: flex;
+    flex-flow: row wrap;
+    align-content: flex-start;
+  }
+
+  
+}

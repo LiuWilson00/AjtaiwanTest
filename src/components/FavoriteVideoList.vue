@@ -12,7 +12,12 @@
       ></YoutubeVideoItem>
     </div>
     <div class="youtube-list-directory">
-      <ListDirectory :tokenList="tokenList" :nowPage="nowPage" @changePage="changePage" :range="5"></ListDirectory>
+      <ListDirectory
+        :tokenList="favoritePageList"
+        :nowPage="nowPage"
+        @changePage="changePage"
+        :range="5"
+      ></ListDirectory>
     </div>
   </div>
 </template>
@@ -40,6 +45,11 @@ export default {
       "youtubeURL",
       "tokenList"
     ]),
+    favoritePageList() {
+      return [
+        ...Array(Math.floor(this.favoriteVideoList.length / 12) + 1).keys()
+      ].map(e => e + 1);
+    },
     youtubeItems() {
       let newvideoList = this.videoList.items;
       return newvideoList == undefined
@@ -50,7 +60,13 @@ export default {
           });
     },
     callAPIURL() {
-      return `${this.youtubeURL}&key=${this.apiKey}&chart=${this.chart}`;
+      return `${this.youtubeURL}&key=${this.apiKey}`;
+    },
+    nowFavoriteVideo() {
+      return this.favoriteVideoList.slice(
+        (this.nowPage - 1) * 12,
+        this.nowPage * 12
+      );
     }
   },
   methods: {
@@ -67,9 +83,9 @@ export default {
     },
     removeCollection(id) {
       let removeIndex = this.favoriteVideoList.indexOf(id);
-      console.log(removeIndex);
+      
       let newFavoriteVideoList = this.favoriteVideoList;
-      console.log(newFavoriteVideoList);
+      
       removeIndex >= 0 ? newFavoriteVideoList.splice(removeIndex, 1) : "";
       localStorage.setItem("MyFavoriteVideoList", newFavoriteVideoList);
       this.getFavoriteVideoList();
@@ -82,20 +98,17 @@ export default {
     }
   },
   mounted() {
-    this.getVideoFormYoutube(this.callAPIURL);
     this.getFavoriteVideoList();
-    this.getTokenList(this.callAPIURL);
+    this.getVideoFormYoutube(
+      this.callAPIURL + "&id=" + this.nowFavoriteVideo.join()
+    );
   },
   watch: {
     nowPage: {
-      handler(val) {
-        if (val <= 1) {
-          this.getVideoFormYoutube(this.callAPIURL);
-        } else {
-          this.getVideoFormYoutube(
-            this.callAPIURL + "&pageToken=" + this.tokenList[this.nowPage - 1]
-          );
-        }
+      handler() {
+        this.getVideoFormYoutube(
+          this.callAPIURL + "&id=" + this.nowFavoriteVideo.join()
+        );
       }
     }
   },
