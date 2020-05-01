@@ -1,6 +1,6 @@
 <template>
   <div class="youtube-list">
-    <div class="youtube-list-title">推薦影片</div>
+    <div class="youtube-list-title">我的最愛</div>
     <div class="youtube-list-content">
       <YoutubeVideoItem
         v-for="videoItem in youtubeItems"
